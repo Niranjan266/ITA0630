@@ -1,0 +1,26 @@
+def find_s(training_data):
+    hypothesis = ['null'] * (len(training_data[0]) - 1)
+
+    for example in training_data:
+        if example[-1].lower() == 'yes':   
+            for i in range(len(hypothesis)):
+                if hypothesis[i] == 'null':
+                    hypothesis[i] = example[i]
+                elif hypothesis[i] != example[i]:
+                    hypothesis[i] = '?'
+    return hypothesis
+
+
+n = int(input("Enter number of training examples: "))
+m = int(input("Enter number of attributes: "))
+
+print("\nEnter training data (attributes followed by Yes/No):")
+data = []
+for i in range(n):
+    row = input(f"Example {i+1}: ").split()
+    data.append(row)
+
+final_hypothesis = find_s(data)
+
+print("\nMost specific hypothesis is:")
+print(final_hypothesis)

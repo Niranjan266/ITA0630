@@ -1,0 +1,57 @@
+import pandas as pd
+from math import log2
+
+# ---------------- DATASET ----------------
+data = {
+    'Outlook': ['Sunny','Sunny','Overcast','Rain','Rain','Rain','Overcast',
+                'Sunny','Sunny','Rain','Sunny','Overcast','Overcast','Rain'],
+    'Humidity': ['High','High','High','High','Normal','Normal','Normal',
+                 'High','Normal','Normal','Normal','High','Normal','High'],
+    'Wind': ['Weak','Strong','Weak','Weak','Weak','Strong','Strong',
+             'Weak','Weak','Weak','Strong','Strong','Weak','Strong'],
+    'PlayTennis': ['No','No','Yes','Yes','Yes','No','Yes',
+                    'No','Yes','Yes','Yes','Yes','Yes','No']
+}
+
+df = pd.DataFrame(data)
+
+# ---------------- ENTROPY ----------------
+def entropy(col):
+    values = col.value_counts()
+    total = len(col)
+    return sum([-(v/total) * log2(v/total) for v in values])
+
+# ---------------- INFORMATION GAIN ----------------
+def information_gain(df, attr):
+    total_entropy = entropy(df['PlayTennis'])
+    values = df[attr].unique()
+    weighted_entropy = 0
+
+    for v in values:
+        subset = df[df[attr] == v]
+        weighted_entropy += (len(subset)/len(df)) * entropy(subset['PlayTennis'])
+
+    return total_entropy - weighted_entropy
+
+# ---------------- FIND ROOT ATTRIBUTE ----------------
+print("Information Gain:")
+for attr in ['Outlook', 'Humidity', 'Wind']:
+    print(attr, ":", information_gain(df, attr))
+
+# ---------------- CLASSIFY NEW SAMPLE ----------------
+print("\nEnter new sample values:")
+outlook = input("Outlook (Sunny/Overcast/Rain): ")
+humidity = input("Humidity (High/Normal): ")
+wind = input("Wind (Weak/Strong): ")
+
+if outlook == "Overcast":
+    result = "Yes"
+elif outlook == "Sunny":
+    result = "No" if humidity == "High" else "Yes"
+elif outlook == "Rain":
+    result = "No" if wind == "Strong" else "Yes"
+else:
+    result = "Invalid input"
+
+print("\nPrediction:")
+print("PlayTennis =", result)
