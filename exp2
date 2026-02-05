@@ -1,0 +1,52 @@
+
+def candidate_elimination(data):
+    n = len(data[0]) - 1   
+    S = ['0'] * n
+    G = [['?'] * n]
+
+    for example in data:
+        attributes = example[:-1]
+        label = example[-1].lower()
+
+        if label == 'yes':
+            for i in range(n):
+                if S[i] == '0':
+                    S[i] = attributes[i]
+                elif S[i] != attributes[i]:
+                    S[i] = '?'
+
+            G = [g for g in G if all(g[i] == '?' or g[i] == S[i] for i in range(n))]
+
+        else:
+            new_G = []
+            for g in G:
+                for i in range(n):
+                    if g[i] == '?' and S[i] != attributes[i]:
+                        temp = g.copy()
+                        temp[i] = S[i]
+                        new_G.append(temp)
+            G = new_G
+
+    return S, G
+
+
+# -------- User Input --------
+n = int(input("Enter number of training examples: "))
+m = int(input("Enter number of attributes: "))
+
+print("\nEnter each example (attributes followed by Yes/No):")
+data = []
+
+for i in range(n):
+    row = input(f"Example {i+1}: ").split()
+    data.append(row)
+
+# Apply algorithm
+S_final, G_final = candidate_elimination(data)
+
+print("\nFinal Specific Boundary (S):")
+print(S_final)
+
+print("\nFinal General Boundary (G):")
+for g in G_final:
+    print(g)
