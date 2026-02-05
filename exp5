@@ -1,0 +1,36 @@
+import numpy as np
+from collections import Counter
+
+# Training data
+X_train = np.array([[1,2],[2,3],[3,3],[6,5],[7,7],[8,6]])
+Y_train = np.array([0,0,0,1,1,1])
+
+# Function to calculate Euclidean distance
+def distance(a, b):
+    return np.sqrt(np.sum((a-b)**2))
+
+# KNN Function
+def knn(X_train, Y_train, test_point, k):
+    dist = []
+    
+    for i in range(len(X_train)):
+        d = distance(X_train[i], test_point)
+        dist.append((d, Y_train[i]))
+    
+    # Sort distances
+    dist.sort(key=lambda x: x[0])
+    
+    # Get first k neighbours
+    neighbours = [dist[i][1] for i in range(k)]
+    
+    # Majority voting
+    return Counter(neighbours).most_common(1)[0][0]
+
+# Test input
+test = np.array([5,5])
+k = 3
+
+result = knn(X_train, Y_train, test, k)
+
+print("Test Point:", test)
+print("Predicted Class:", result)
